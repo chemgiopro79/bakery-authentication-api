@@ -1,0 +1,6 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/One.MDM.Authentication/bin/Debug/net8.0
+/One.MDM.Authentication/obj
