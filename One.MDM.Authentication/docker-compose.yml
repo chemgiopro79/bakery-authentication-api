@@ -1,0 +1,10 @@
+﻿version: '3.8'
+services:
+  authentication-api:
+    build: .
+    container_name: bakery-authentication-api
+    ports:
+      - "5079:5079"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=host.docker.internal;Port=5433;Database=bakery_db;Username=postgres;Password=postgres
