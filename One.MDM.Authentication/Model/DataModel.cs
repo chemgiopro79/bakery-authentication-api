@@ -4,9 +4,10 @@
     public class User
     {
         public Guid Id { get; set; }
+        public string Code { get; set; } = string.Empty;
         public string Username { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public int IsActive { get; set; }
+        public string Status { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public string? CreatedBy { get; set; }
         public DateTime ModifiedDate { get; set; } = DateTime.UtcNow;
@@ -29,8 +30,8 @@
     {
         public Guid UserId { get; set; }
         public Guid RoleId { get; set; }
-        public User User { get; set; } = null!;
-        public Role Role { get; set; } = null!;
+        public User User { get; set; }
+        public Role Role { get; set; }
 
     }
     public class Entities

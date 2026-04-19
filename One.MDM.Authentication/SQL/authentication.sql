@@ -4,11 +4,13 @@ DROP TABLE IF EXISTS public.user_role CASCADE;
 DROP TABLE IF EXISTS public.privilege CASCADE;
 DROP TABLE public.entities CASCADE;
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
 CREATE TABLE public.user (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    code VARCHAR(250) NOT NULL,
     user_name VARCHAR(250) NOT NULL,
     password VARCHAR(250) NOT NULL,
-    is_active BIGINT DEFAULT 1,
+    status VARCHAR(250) NOT NULL,
     created_date TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     created_by VARCHAR(250),
     modified_date TIMESTAMP WITHOUT TIME ZONE,
@@ -102,82 +104,125 @@ VALUES
     ('stock_transactions', 'System', CURRENT_TIMESTAMP, 'Admin'),
     ('unit', 'System', CURRENT_TIMESTAMP, 'Admin'),
     ('unit_conversion', 'System', CURRENT_TIMESTAMP, 'Admin'),
-    ('warehouse', 'System', CURRENT_TIMESTAMP, 'Admin');
+    ('store', 'System', CURRENT_TIMESTAMP, 'Admin');
+    ('kitchen', 'System', CURRENT_TIMESTAMP, 'Admin');
     ('entities', 'System', CURRENT_TIMESTAMP, 'Admin');
 
 -- Privilege cho bảng privilege
 -- branch
 INSERT INTO public.privilege
-(id, role_id, table_name, read, write, update, delete, approve, assign, share,
+(id, role_id, table_id, table_name, read, write, update, delete, approve, assign, share,
  created_date, modified_date, created_by, modified_by)
 VALUES (gen_random_uuid(), (SELECT id FROM public."role" WHERE name = 'System Admin'),
- 'branch', 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+(SELECT id FROM public.entities WHERE name = 'branch'),
+ (SELECT name FROM public.entities WHERE name = 'branch'),
+ 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
 
 -- formula
 INSERT INTO public.privilege
-(id, role_id, table_name, read, write, update, delete, approve, assign, share,
+(id, role_id, table_id, table_name, read, write, update, delete, approve, assign, share,
  created_date, modified_date, created_by, modified_by)
 VALUES (gen_random_uuid(), (SELECT id FROM public."role" WHERE name = 'System Admin'),
- 'formula', 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+(SELECT id FROM public.entities WHERE name = 'formula'),
+(SELECT name FROM public.entities WHERE name = 'formula'),
+ 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
 
 -- formula_component
 INSERT INTO public.privilege
-(id, role_id, table_name, read, write, update, delete, approve, assign, share,
+(id, role_id, table_id, table_name, read, write, update, delete, approve, assign, share,
  created_date, modified_date, created_by, modified_by)
 VALUES (gen_random_uuid(), (SELECT id FROM public."role" WHERE name = 'System Admin'),
- 'formula_component', 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+(SELECT id FROM public.entities WHERE name = 'formula_component'),
+(SELECT name FROM public.entities WHERE name = 'formula_component'),
+ 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
 
 -- inventory
 INSERT INTO public.privilege
-(id, role_id, table_name, read, write, update, delete, approve, assign, share,
+(id, role_id, table_id, table_name, read, write, update, delete, approve, assign, share,
  created_date, modified_date, created_by, modified_by)
 VALUES (gen_random_uuid(), (SELECT id FROM public."role" WHERE name = 'System Admin'),
- 'inventory', 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+(SELECT id FROM public.entities WHERE name = 'inventory'),
+(SELECT name FROM public.entities WHERE name = 'inventory'),
+ 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
 
 -- product
 INSERT INTO public.privilege
-(id, role_id, table_name, read, write, update, delete, approve, assign, share,
+(id, role_id, table_id, table_name, read, write, update, delete, approve, assign, share,
  created_date, modified_date, created_by, modified_by)
 VALUES (gen_random_uuid(), (SELECT id FROM public."role" WHERE name = 'System Admin'),
- 'product', 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+(SELECT id FROM public.entities WHERE name = 'product'),
+(SELECT name FROM public.entities WHERE name = 'product'),
+ 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
 
 -- product_prices
 INSERT INTO public.privilege
-(id, role_id, table_name, read, write, update, delete, approve, assign, share,
+(id, role_id, table_id, table_name, read, write, update, delete, approve, assign, share,
  created_date, modified_date, created_by, modified_by)
 VALUES (gen_random_uuid(), (SELECT id FROM public."role" WHERE name = 'System Admin'),
- 'product_prices', 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+(SELECT id FROM public.entities WHERE name = 'product_prices'),
+(SELECT name FROM public.entities WHERE name = 'product_prices'),
+ 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
 
 -- stock_transactions
 INSERT INTO public.privilege
-(id, role_id, table_name, read, write, update, delete, approve, assign, share,
+(id, role_id,  table_id, table_name, read, write, update, delete, approve, assign, share,
  created_date, modified_date, created_by, modified_by)
 VALUES (gen_random_uuid(), (SELECT id FROM public."role" WHERE name = 'System Admin'),
- 'stock_transactions', 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+(SELECT id FROM public.entities WHERE name = 'stock_transactions'),
+(SELECT name FROM public.entities WHERE name = 'stock_transactions'),
+ 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
 
 -- unit
 INSERT INTO public.privilege
-(id, role_id, table_name, read, write, update, delete, approve, assign, share,
+(id, role_id,  table_id, table_name, read, write, update, delete, approve, assign, share,
  created_date, modified_date, created_by, modified_by)
 VALUES (gen_random_uuid(), (SELECT id FROM public."role" WHERE name = 'System Admin'),
- 'unit', 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+(SELECT id FROM public.entities WHERE name = 'unit'),
+(SELECT name FROM public.entities WHERE name = 'unit'),
+ 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
 
 -- unit_conversion
 INSERT INTO public.privilege
-(id, role_id, table_name, read, write, update, delete, approve, assign, share,
+(id, role_id,  table_id, table_name, read, write, update, delete, approve, assign, share,
  created_date, modified_date, created_by, modified_by)
 VALUES (gen_random_uuid(), (SELECT id FROM public."role" WHERE name = 'System Admin'),
- 'unit_conversion', 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+(SELECT id FROM public.entities WHERE name = 'unit_conversion'),
+(SELECT name FROM public.entities WHERE name = 'unit_conversion'),
+ 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
 
--- warehouse
-INSERT INTO public.privilege
-(id, role_id, table_name, read, write, update, delete, approve, assign, share,
+-- store
+INSERT INTO public."privilege"
+(id, role_id, table_id, table_name, read, write, update, delete, approve, assign, share,
  created_date, modified_date, created_by, modified_by)
 VALUES (gen_random_uuid(), (SELECT id FROM public."role" WHERE name = 'System Admin'),
- 'warehouse', 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+(SELECT id FROM public.entities WHERE name = 'store'),
+(SELECT name FROM public.entities WHERE name = 'store'),
+ 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+
+-- kitchen
+INSERT INTO public."privilege"
+(id, role_id, table_id, table_name, read, write, update, delete, approve, assign, share,
+ created_date, modified_date, created_by, modified_by)
+VALUES (gen_random_uuid(), (SELECT id FROM public."role" WHERE name = 'System Admin'),
+(SELECT id FROM public.entities WHERE name = 'kitchen'),
+(SELECT name FROM public.entities WHERE name = 'kitchen'),
+ 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+
  -- entities
 INSERT INTO public.privilege
-(id, role_id, table_name, read, write, update, delete, approve, assign, share,
+(id, role_id, table_id, table_name, read, write, update, delete, approve, assign, share,
  created_date, modified_date, created_by, modified_by)
 VALUES (gen_random_uuid(), (SELECT id FROM public."role" WHERE name = 'System Admin'),
- 'entities', 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+(SELECT id FROM public.entities WHERE name = 'entities'),
+(SELECT name FROM public.entities WHERE name = 'entities'),
+ 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+
+ -- user
+INSERT INTO public."privilege"
+(id, role_id, table_id, table_name, read, write, update, delete, approve, assign, share,
+ created_date, modified_date, created_by, modified_by)
+VALUES (gen_random_uuid(), (SELECT id FROM public."role" WHERE name = 'System Admin'),
+(SELECT id FROM public.entities WHERE name = 'user'),
+(SELECT name FROM public.entities WHERE name = 'user'),
+ 1,1,1,1,1,1,1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'system', 'system');
+

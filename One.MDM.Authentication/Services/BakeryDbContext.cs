@@ -27,8 +27,11 @@ namespace One.MDM.Authentication.Services
                       .HasColumnName("id")
                       .HasDefaultValueSql("gen_random_uuid()"); // tự sinh GUID
 
-                entity.Property(p => p.IsActive).HasColumnName("is_active");
-
+                entity.Property(p => p.Status).HasColumnName("status");
+                entity.Property(u => u.Code)
+                     .HasColumnName("code")
+                     .HasMaxLength(250)
+                     .IsRequired();
                 entity.Property(u => u.Username)
                       .HasColumnName("user_name")
                       .HasMaxLength(250)

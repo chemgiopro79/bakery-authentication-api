@@ -17,7 +17,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddDbContext<BakeryDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 // Build app
 var app = builder.Build();
 
@@ -31,9 +38,11 @@ app.UseSwaggerUI(c =>
 
 // Middleware pipeline
 app.UseHttpsRedirection();
-app.UseAuthentication();
+
 app.UseStaticFiles();
 app.UseRouting();
+app.UseCors("AllowAll");
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Map endpoints

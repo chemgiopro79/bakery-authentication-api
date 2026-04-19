@@ -26,7 +26,7 @@ public class AuthenticationController : ControllerBase
         {
             if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
             {
-                return BadRequest("Username và Password không được để trống");
+                return BadRequest("Tên đăng nhập hoặc mật khẩu không được để trống");
             }
 
             var result = await _authService.Login(request.Username, request.Password);
@@ -36,7 +36,7 @@ public class AuthenticationController : ControllerBase
                 return Ok(result);
             }
 
-            return Unauthorized("Username/Password không đúng");
+            return BadRequest("Tên đăng nhập hoặc mật khẩu không đúng.");
         }
         catch (Exception ex)
         {
@@ -68,11 +68,11 @@ public class AuthenticationController : ControllerBase
         }
     }
     [HttpGet("users")]
-    public IActionResult GetUsers()
+    public IActionResult GetUsers(int page = 0, int size = 20)
     {
         try
         {
-            var result = _authService.GetUser();
+            var result = _authService.GetUser(page, size);
             return Ok(result);
         }
         catch (Exception ex)
@@ -156,7 +156,6 @@ public class AuthenticationController : ControllerBase
         {
             return BadRequest($"GetUserRoles {ex.Message}");
         }
-       
     }
     [HttpGet("privilege/{roleId}")]
     public async Task<IActionResult> GetRolePrivileges(Guid roleId)

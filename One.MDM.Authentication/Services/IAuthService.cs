@@ -10,7 +10,7 @@ namespace One.MDM.Authentication.Services
         Task<string> CreateUser(string username, string password);
         Task<string> CreateRolePrivilege(RolePrivilegeRequest request);
         Task<string> CreateEntity(CreateEntity request);
-        Task<List<User>> GetUser();
+        Task<PagedResult<User>> GetUser(int page = 0, int size = 20);
         Task<object> GetUserRoles(Guid userId);
         Task<List<Role>> GetRoles();
         Task<List<Entities>> GetEntities();

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace One.MDM.Authentication.Models
@@ -84,12 +85,25 @@ namespace One.MDM.Authentication.Models
             {
                 return "Username đã tồn tại";
             }
+            //random a number for code
+            int code;
+            do
+            {
+                var rng = RandomNumberGenerator.Create();
+                var bytes = new byte[4];
+                rng.GetBytes(bytes);
+                int raw = BitConverter.ToInt32(bytes, 0);
+                code = Math.Abs(raw % 900000) + 100000;
+            } while (_bakeryDbContext.Users
+                .AsNoTracking()
+                .Any(u => u.Code == code.ToString()));
 
             var user = new User
             {
                 Id = Guid.NewGuid(),
+                Code = code.ToString(),
                 Username = username,
-                IsActive = 1,
+                Status = "ACTIVE",
                 Password = BCrypt.Net.BCrypt.HashPassword(password),
                 CreatedDate = DateTime.UtcNow,
                 ModifiedDate = DateTime.UtcNow,
@@ -103,20 +117,54 @@ namespace One.MDM.Authentication.Models
             return "Success";
         }
 
-        public Task<List<User>> GetUser()
+        public Task<PagedResult<User>> GetUser(int page = 0, int size = 20)
         {
-             return Task.FromResult(_bakeryDbContext.Users.ToList());
+            var query = _bakeryDbContext.Users.AsNoTracking();
+
+            var totalElements = query.Count();
+            var totalPages = (int)Math.Ceiling(totalElements / (double)size);
+
+            var result = query
+                .Skip(page * size)
+                .Take(size)
+                .OrderBy(x => x.Username)
+                .ToList();
+
+            var response = new PagedResult<User>
+            {
+                Data = result,
+                Page = new PageInfo
+                {
+                    Number = page,
+                    Size = size,
+                    TotalElements = totalElements,
+                    TotalPages = totalPages,
+                    First = page == 0,
+                    Last = page >= totalPages - 1
+                }
+            };
+
+            return Task.FromResult(response);
         }
+
         public async Task<object> GetUserRoles(Guid userId)
         {
+            var existingUser = await _bakeryDbContext.Users
+               .AsNoTracking()
+               .FirstOrDefaultAsync(u => u.Id == userId);
             var roleUser = await _bakeryDbContext.UserRoles
-                    .Where(ur => ur.UserId == userId)
-                    .Select(ur => ur.Role)
-                    .ToListAsync();
+                  .Where(ur => ur.UserId == userId)
+                  .Select(ur => new
+                  {
+                      UserId = ur.UserId,
+                      RoleId = ur.RoleId
+                  })
+          .ToListAsync();
             var roles = await _bakeryDbContext.Roles.ToListAsync();
            
             return new
             {
+                user = existingUser,
                 RoleUsers = roleUser,
                 Roles = roles.ToList()
             };
